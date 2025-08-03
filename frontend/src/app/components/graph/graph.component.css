@@ -1,0 +1,30 @@
+ul {
+  list-style: none;
+  padding: 0;
+}
+  
+li {
+  padding: 5px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+li:hover {
+  background-color: #e6e6e6;
+}
+  
+h3 {
+  margin-top: 20px;
+}
+
+.graph{
+  display: flex; 
+  flex-wrap: wrap; 
+  width: 100%; 
+  height: 300px; 
+  justify-content: center;
+  transition:  0.5s ease-in-out; /* Animation fluide */
+}

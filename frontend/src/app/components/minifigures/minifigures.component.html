@@ -1,0 +1,240 @@
+<div style="margin-left: 5rem;margin-right: 5rem; margin-bottom:10rem ;overflow: hidden; display: flex; flex-wrap: wrap;">
+    
+    
+    <div [style.height.px]="isFixed ? sectionHeight : 0"></div> <!-- Placeholder space -->
+        
+        <div class="Recherche mx-auto" [class.fixed]="isFixed">
+            <h3>Number of Minifigures : <b>({{minifigures.length}}) </b></h3>
+            <div *ngIf="isFixed" style="margin-bottom: 0.5rem; width: -webkit-fill-available; max-width: fit-content; display: flex;flex-wrap: wrap; gap: 20px;">
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <span>Total new :</span>
+                    <b *ngIf="filteredMinifigures.length > 0 ">{{ totalNewPrice2 }} €</b>
+                    <b  *ngIf="filteredMinifigures.length == 0 && !minifigId">{{ totalNewPrice }} €</b>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+                    <span>Total used :</span>
+                    <b *ngIf="filteredMinifigures.length > 0">{{ totalUsedPrice2 }} €</b>
+                    <b *ngIf="filteredMinifigures.length == 0 && !minifigId">{{ totalUsedPrice }} €</b>
+                </div>
+            </div>  
+            <!-- <input [(ngModel)]="minifigId" id="minifigId" type="text" placeholder="Minifigure ID" /> -->
+            <div class="input-group " style="width: -webkit-fill-available; max-width: fit-content;">
+                <div class="input-group-prepend">
+                  <span class="input-group-text bg-warning-subtle" id="basic-addon1">ID</span>
+                </div>
+                <input (keyup.enter)="addMinifigure()" [(ngModel)]="minifigId" (input)="filterMinifigures()" id="minifigId" type="text" class="form-control focus-ring focus-ring-warning border-warning" placeholder="Minifigure" aria-label="Minifigure" aria-describedby="basic-addon1">
+                <div class="input-group-append"  style="display: flex; flex-wrap: wrap;gap: 10px;">
+                    <button class="btn btn-warning" type="button" (click)="addMinifigure()">
+                        Add
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-plus-fill" viewBox="0 0 16 16">
+                            <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                            <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5"/>
+                        </svg>
+                    </button>
+                    <button class="btn btn-success" (click)="MAJMinifigure()" [disabled]="isMAJLoading">
+                    <!-- Show spinner while loading -->
+                    <span *ngIf="isMAJLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <!-- Button text (changes while loading) -->
+                    <span *ngIf="!isMAJLoading">Update</span>
+                    <span *ngIf="isMAJLoading"> Updating ...</span>
+                </button>
+                </div>
+            </div> 
+            
+        </div>
+        https://brickset.com/minifigs
+    
+    
+
+    
+
+    <table class="table table-striped " style="overflow: hidden;" >
+        <thead class="text-center align-middle table-bordered ">
+            <tr>
+                <th>Image</th>
+                <th (click)="sortTable('Name')" >
+                    Name
+                    <span *ngIf="sortKey === 'Name'">
+                      <span *ngIf="sortOrder === 'asc'" style="color: white;">▲</span>
+                      <span *ngIf="sortOrder === 'desc'" style="color: white;">▼</span>
+                    </span>
+                </th>
+                <th (click)="sortTable('Minifig number')" class="space">
+                    Number
+                    <span *ngIf="sortKey === 'Minifig number'">
+                        <span *ngIf="sortOrder === 'asc'" style="color: white;">▲</span>
+                        <span *ngIf="sortOrder === 'desc'" style="color: white;">▼</span>
+                    </span>
+                </th>
+                <th (click)="sortTable('Category')" class="space">
+                    Category
+                    <span *ngIf="sortKey === 'Category'">
+                        <span *ngIf="sortOrder === 'asc'" style="color: white;">▲</span>
+                        <span *ngIf="sortOrder === 'desc'" style="color: white;">▼</span>
+                    </span>
+                </th>
+                <th (click)="sortTable('Subcategory')" class="space">
+                    Subcategory
+                    <span *ngIf="sortKey === 'Subcategory'">
+                        <span *ngIf="sortOrder === 'asc'" style="color: white;">▲</span>
+                        <span *ngIf="sortOrder === 'desc'" style="color: white;">▼</span>
+                    </span>
+                </th>
+                <th (click)="sortTable('Year released')" class="space">
+                    Year
+                    <span *ngIf="sortKey === 'Year released'">
+                        <span *ngIf="sortOrder === 'asc'" style="color: white;">▲</span>
+                        <span *ngIf="sortOrder === 'desc'" style="color: white;">▼</span>
+                    </span>
+                </th>
+                <th (click)="sortTable('Appears in')">
+                    Set(s)
+                    <span *ngIf="sortKey === 'Appears in'">
+                        <span *ngIf="sortOrder === 'asc'" style="color: white;">▲</span>
+                        <span *ngIf="sortOrder === 'desc'" style="color: white;">▼</span>
+                    </span>
+                </th>
+                <th (click)="sortTable('Current value.new_price')" class="space">
+                    New Price (€)
+                    <span *ngIf="sortKey === 'Current value.new_price'">
+                        <span *ngIf="sortOrder === 'asc'" style="color: white;">▲</span>
+                        <span *ngIf="sortOrder === 'desc'" style="color: white;">▼</span>
+                    </span>
+                </th>
+                <th (click)="sortTable('Current value.used_price')" class="space">
+                    Used Price (€)
+                    <span *ngIf="sortKey === 'Current value.used_price'">
+                        <span *ngIf="sortOrder === 'asc'" style="color: white;">▲</span>
+                        <span *ngIf="sortOrder === 'desc'" style="color: white;">▼</span>
+                    </span>
+                </th>
+                <th (click)="sortTable('Used price comparison.difference')" class="space" >
+                    Change (Used Price)
+                    <span *ngIf="sortKey === 'Used price comparison.difference'">
+                        <span *ngIf="sortOrder === 'asc'" style="color: white;">▲</span>
+                        <span *ngIf="sortOrder === 'desc'" style="color: white;">▼</span>
+                    </span>
+                </th>
+                <th class="bg-warning">Actions</th>                
+            </tr>
+        </thead>
+        <tbody *ngIf="filteredMinifigures.length == 0 && !minifigId"  >
+            <ng-container *ngFor="let figure of minifigures; let i = index">
+
+            <tr class="text-center align-middle">
+              <td>
+                  <!-- Display image using the ID or number to construct the URL -->
+                  <img [src]="'https://img.bricklink.com/ItemImage/MN/0/' + figure['Minifig number'] + '.png'" alt="{{ figure.Name }}" width="75">
+                  <input placeholder="1" [(ngModel)]="figure['Quantité']"  (input)="updateQtt(figure['Quantité'],figure['Minifig number'])" class="form-control text-center" id="number" type="number" min="1" value="{{ figure['Quantité'] }}" />
+                </td>
+              <td class="">{{ figure['Name'] }}</td>
+              <td *ngIf="figure['Minifig number']">{{ figure['Minifig number'] }}</td>
+              <td *ngIf="figure['Number']">{{ figure['Number'] }}</td>
+              <td>{{ figure['Category'] }}</td>
+              <td *ngIf="figure['Subcategory']">{{ figure['Subcategory'] }}</td>
+              <td *ngIf="figure['Subtheme']">{{ figure['Subtheme'] }}</td>
+              <td>{{ figure['Year released'] }}</td>
+              <td>{{ figure['Appears in'] }}</td>
+              <td>{{ figure['Current value']?.new_price }}</td>
+              <td>{{ figure['Current value']?.used_price }}</td>
+              <td >
+                  <div *ngIf="figure['Used price comparison']?.decrease" style="color: red;">
+                      {{ figure['Used price comparison']?.difference }}€
+                  </div>
+                  <div *ngIf="figure['Used price comparison']?.increase" style="color: green;">
+                      + {{ figure['Used price comparison']?.difference }}€
+                  </div>
+                  <div *ngIf="figure['Used price comparison']?.unchanged" style="color: gray;">=</div>
+              </td>
+              <td>
+                  <button class="btn btn-danger mt-2" (click)="deleteMinifigure(i,figure['Minifig number'])">Delete</button>
+                  <button class="btn btn-dark mt-2" *ngIf="figure['Price History']" (click)="toggleGraphVisibility(i)" style="width: max-content;">
+                    Evolution
+                    <span *ngIf="!isBrowserArray[i]" style="color: white;">▲</span>
+                    <span *ngIf="isBrowserArray[i]" style="color: white;">▼</span>
+                </button>
+              </td>
+
+            </tr>
+            <!-- New row for the chart -->
+            <tr *ngIf="isBrowserArray[i]">
+                <td colspan="13"> <!-- Span all columns -->
+                    <app-graph [historique]="figure['Price History']" 
+                            [Accurate]="figure['Current value']" 
+                            [isBrowser]="isBrowserArray[i]">
+                    </app-graph>
+                </td>
+            </tr>
+            </ng-container>
+        </tbody>
+        <tbody *ngIf="filteredMinifigures.length >= 0" >
+            <ng-container *ngFor="let figure of filteredMinifigures; let i = index">
+
+            <tr class="text-center align-middle">
+          
+              <td>
+                  <!-- Display image using the ID or number to construct the URL -->
+                  <img [src]="'https://img.bricklink.com/ItemImage/MN/0/' + figure['Minifig number'] + '.png'" alt="{{ figure.Name }}" width="75">
+                  <input placeholder="1" [(ngModel)]="figure['Quantité']"  (input)="updateQtt(figure['Quantité'],figure['Minifig number'])" class="form-control text-center" id="number" type="number" min="1" value="{{ figure['Quantité'] }}" />
+              </td>
+              <td class="">{{ figure['Name'] }}</td>
+              <td *ngIf="figure['Minifig number']">{{ figure['Minifig number'] }}</td>
+              <td *ngIf="figure['Number']">{{ figure['Number'] }}</td>
+              <td>{{ figure['Category'] }}</td>
+              <td *ngIf="figure['Subcategory']">{{ figure['Subcategory'] }}</td>
+              <td *ngIf="figure['Subtheme']">{{ figure['Subtheme'] }}</td>
+              <td>{{ figure['Year released'] }}</td>
+              <td>{{ figure['Appears in'] }}</td>
+              <td>{{ figure['Current value']?.new_price }}</td>
+              <td>{{ figure['Current value']?.used_price }}</td>
+              <td >
+                  <div *ngIf="figure['Used price comparison']?.decrease" style="color: red;">
+                      {{ figure['Used price comparison']?.difference }}€
+                  </div>
+                  <div *ngIf="figure['Used price comparison']?.increase" style="color: green;">
+                      + {{ figure['Used price comparison']?.difference }}€
+                  </div>
+                  <div *ngIf="figure['Used price comparison']?.unchanged" style="color: gray;">=</div>
+              </td>
+              <td>
+                <button class="btn btn-danger mt-2" (click)="deleteMinifigure(i,figure['Minifig number'])">Delete</button>
+                <button class="btn btn-dark mt-2" *ngIf="figure['Price History']" (click)="toggleGraphVisibility(i)" style="width: max-content;">
+                    Evolution
+                    <span *ngIf="!isBrowserArray[i]" style="color: white;">▲</span>
+                    <span *ngIf="isBrowserArray[i]" style="color: white;">▼</span>
+                </button>
+              </td>
+
+            </tr>
+            <!-- New row for the chart -->
+            <tr *ngIf="isBrowserArray[i]">
+                <td colspan="13"> <!-- Span all columns -->
+                    <app-graph [historique]="figure['Price History']" 
+                            [Accurate]="figure['Current value']" 
+                            [isBrowser]="isBrowserArray[i]">
+                    </app-graph>
+                </td>
+            </tr>
+            </ng-container>
+        </tbody>
+          
+        <tfoot>
+            <tr>
+                <td colspan="7" >Total price of new minifigures :</td>
+                <td colspan="4" class="fw-bold" *ngIf="filteredMinifigures.length > 0">{{ totalNewPrice2 }} €</td>
+                <td colspan="4" class="fw-bold" *ngIf="filteredMinifigures.length == 0 && !minifigId">{{ totalNewPrice }} €</td>
+
+            </tr>
+            <tr>
+                <td colspan="7" >Total price of used minifigures :</td>
+
+
+<!-- same number of lines returned -->
+
+                <td colspan="4" class="fw-bold" *ngIf="filteredMinifigures.length > 0">{{ totalUsedPrice2 }} €</td>
+                <td colspan="4" class="fw-bold" *ngIf="filteredMinifigures.length == 0 && !minifigId">{{ totalUsedPrice }} €</td>
+
+            </tr>
+        </tfoot>
+      </table>
+</div>

@@ -1,0 +1,11 @@
+<div *ngIf="isBrowser" class="graph">
+  <canvas baseChart
+        [datasets]="chartData"
+        [labels]="chartLabels"
+        [options]="lineChartOptions"
+        [type]="'line'"
+        (chartHover)="chartHovered($event)"
+        (chartClick)="chartClicked($event)">
+  </canvas>
+  
+</div>
